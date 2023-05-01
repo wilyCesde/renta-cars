@@ -5,10 +5,11 @@ import UsersScreen from "./screens/UsersScreen";
 import CarsScreen from "./screens/CarsScreen";
 import RentsScreen from "./screens/RentsScreen";
 import DataContext from "./DataContext";
-import { MaterialIcons } from "@expo/vector-icons"; //Iconos
+import { MaterialIcons } from "@expo/vector-icons";
 import Icon from "@mdi/react";
 import { mdiCarBack } from "@mdi/js";
 import React, { useState } from "react";
+
 const Tab = createBottomTabNavigator();
 
 const users = [
@@ -48,11 +49,23 @@ const rents = [
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <PaperProvider>
       <NavigationContainer>
         <DataContext.Provider value={{ users, cars, rents }}>
           <Tab.Navigator>
+            <Tab.Screen
+              name="Users"
+              children={() => (
+                <UsersScreen loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+              )}
+              options={{
+                tabBarIcon: () => (
+                  <MaterialIcons name="people" size={22} color="black" />
+                ),
+              }}
+            />
             {loggedIn && (
               <>
                 <Tab.Screen
@@ -68,20 +81,6 @@ export default function App() {
                   options={{
                     tabBarIcon: () => (
                       <MaterialIcons name="folder" size={22} color="green" />
-                    ),
-                  }}
-                />
-                <Tab.Screen
-                  name="LockOut"
-                  children={() => (
-                    <UsersScreen
-                      loggedIn={loggedIn}
-                      setLoggedIn={setLoggedIn}
-                    />
-                  )}
-                  options={{
-                    tabBarIcon: () => (
-                      <MaterialIcons name="people" size={22} color="black" />
                     ),
                   }}
                 />
