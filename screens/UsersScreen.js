@@ -1,10 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext,useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import DataContext from "../DataContext";
 
+
 const UsersScreen = ({ loggedIn, setLoggedIn }) => {
+  const [message, setMessage] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+
   const { users } = useContext(DataContext);
   const {
     control,
@@ -14,15 +18,23 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
   } = useForm();
 
   const onSubmit = (data) => {
-    const user = users.find(
-      (user) =>
-        user.username === data.username && user.password === data.password
-    );
-    if (user) {
-      setLoggedIn(true);
-      reset();
+    if (isRegistering) {
+      // Handle user registration
+      // ...
+      setIsRegistering(false);
+      setMessage("Usuario registrado con éxito");
     } else {
-      console.log("Nombre de usuario o contraseña incorrectos");
+      // Handle user login
+      const user = users.find(
+        (user) =>
+          user.username === data.username && user.password === data.password
+      );
+      if (user) {
+        setLoggedIn(true);
+        reset();
+      } else {
+        setMessage("Nombre de usuario o contraseña incorrectos");
+      }
     }
   };
 
@@ -30,9 +42,14 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
     setLoggedIn(false);
   };
 
+  const handleRegister = () => {
+    setIsRegistering(true);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Iniciar sesión</Text>
+
       {!loggedIn && (
         <>
           <Controller
@@ -73,8 +90,17 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
             onPress={handleSubmit(onSubmit)}
             style={styles.button}
           >
-            Iniciar sesión
+            {isRegistering ? "Registrarse" : "Iniciar sesión"}
           </Button>
+          {!isRegistering && (
+            <Button
+              mode="contained"
+              onPress={handleRegister}
+              style={styles.button}
+            >
+              Registrarse
+            </Button>
+          )}
         </>
       )}
       {loggedIn && (
@@ -82,10 +108,10 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
           Cerrar sesión
         </Button>
       )}
+      <Text style={styles.message}>{message}</Text>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -99,6 +125,11 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 10,
   },
+  message: {
+    color: "red",
+    marginVertical: 10,
+  },
+  
 });
 
 export default UsersScreen;

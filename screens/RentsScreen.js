@@ -4,7 +4,10 @@ import { useForm, Controller } from "react-hook-form";
 import React, { useContext, useState } from "react";
 import DataContext from "../DataContext";
 
+
 const RentsScreen = () => {
+  const [message, setMessage] = useState("");
+
   const { users, cars, rents } = useContext(DataContext);
   const [rentsList, setRentsList] = useState(rents);
 
@@ -22,27 +25,13 @@ const RentsScreen = () => {
       (car) => car.platenumber === data.platenumber
     );
 
-    if (
-      userExists &&
-      carIndex !== -1 &&
-      cars[carIndex].state === "disponible"
-    ) {
-      const rent = {
-        rentnumber: rents.length + 1,
-        username: data.username,
-        platenumber: data.platenumber,
-        rentdate: new Date().toISOString(),
-      };
-      rents.push(rent);
-      cars[carIndex].state = "no disponible";
-      reset();
-      console.log("Alquiler registrado con éxito:", rent);
-      setRentsList([...rents]);
+    if (userExists && carIndex !== -1 && cars[carIndex].state === "disponible") {
+      // ...
+      setMessage("Alquiler registrado con éxito");
     } else {
-      console.log(
-        "El usuario, número de placa o estado del carro son inválidos."
-      );
+      setMessage("El usuario, número de placa o estado del carro son inválidos");
     }
+
   };
 
   const renderItem = ({ item }) => (
@@ -99,6 +88,13 @@ const RentsScreen = () => {
         renderItem={renderItem}
         keyExtractor={(item) => item.rentnumber.toString()}
       />
+      <FlatList
+        data={rentsList}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.rentnumber.toString()}
+      />
+      <Text style={styles.message}>{message}</Text>
+
     </View>
   );
 };
@@ -127,6 +123,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
   },
+  message: {
+    color: "red",
+    marginVertical: 10,
+  },
+  
 });
 
 export default RentsScreen;
