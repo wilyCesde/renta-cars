@@ -5,8 +5,8 @@ import React, { useContext, useState } from "react";
 import DataContext from "../DataContext";
 
 const RentsScreen = () => {
-  const { users, cars, rents } = useContext(DataContext);
-  const [rentsList, setRentsList] = useState(rents);
+  const { usuarios, carros, rentas } = useContext(DataContext);
+  const [rentasList, setRentsList] = useState(rentas);
 
   const {
     control,
@@ -17,27 +17,29 @@ const RentsScreen = () => {
 
   const onSubmit = (data) => {
     // Verificar si el usuario y el número de placa existen en los arreglos respectivos
-    const userExists = users.some((user) => user.username === data.username);
-    const carIndex = cars.findIndex(
+    const userExists = usuarios.some(
+      (usuarios) => usuarios.username === data.username
+    );
+    const carIndex = carros.findIndex(
       (car) => car.platenumber === data.platenumber
     );
 
     if (
       userExists &&
       carIndex !== -1 &&
-      cars[carIndex].state === "disponible"
+      carros[carIndex].state === "disponible"
     ) {
       const rent = {
-        rentnumber: rents.length + 1,
+        rentnumber: rentas.length + 1,
         username: data.username,
         platenumber: data.platenumber,
         rentdate: new Date().toISOString(),
       };
-      rents.push(rent);
-      cars[carIndex].state = "no disponible";
+      rentas.push(rent);
+      carros[carIndex].state = "no disponible";
       reset();
       console.log("Alquiler registrado con éxito:", rent);
-      setRentsList([...rents]);
+      setRentsList([...rentas]);
     } else {
       console.log(
         "El usuario, número de placa o estado del carro son inválidos."
@@ -53,12 +55,21 @@ const RentsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Registrar Alquiler</Text>
+      <br></br>
+      <br></br>
+      <Text>
+        <img
+          src="https://i.pinimg.com/originals/65/ab/66/65ab660f0fd4b6509fd93f846b1693f8.gif"
+          width={"80%"}
+          textAlign="center"
+        ></img>
+      </Text>
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            label="Nombre de usuario"
+            style={styles.TextInput}
+            label="Usuario"
             onBlur={onBlur}
             onChangeText={(value) => onChange(value)}
             value={value}
@@ -68,13 +79,14 @@ const RentsScreen = () => {
         name="username"
         rules={{ required: true }}
       />
-      {errors.username && <Text>El nombre de usuario es requerido.</Text>}
-
+      {errors.username && <Text>Usuario requerido.</Text>}
+      <br></br>
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            label="Número de placa"
+            style={styles.TextInput}
+            label="Placa"
             onBlur={onBlur}
             onChangeText={(value) => onChange(value)}
             value={value}
@@ -84,7 +96,7 @@ const RentsScreen = () => {
         name="platenumber"
         rules={{ required: true }}
       />
-      {errors.platenumber && <Text>El número de placa es requerido.</Text>}
+      {errors.platenumber && <Text>Placa requerida.</Text>}
 
       <Button
         mode="contained"
@@ -93,9 +105,10 @@ const RentsScreen = () => {
       >
         Registrar Alquiler
       </Button>
-      <Text style={styles.listTitle}>Lista de Rentas</Text>
+      <br></br>
+      <br></br>
       <FlatList
-        data={rentsList}
+        data={rentasList}
         renderItem={renderItem}
         keyExtractor={(item) => item.rentnumber.toString()}
       />
@@ -107,6 +120,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
+    backgroundColor: "white",
   },
   title: {
     fontSize: 24,
@@ -115,6 +129,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+    backgroundColor: "#364b91",
   },
   listTitle: {
     fontSize: 20,
@@ -122,10 +137,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   listItem: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#white",
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
+  },
+  TextInput: {
+    backgroundColor: "white",
   },
 });
 

@@ -12,38 +12,38 @@ import React, { useState } from "react";
 
 const Tab = createBottomTabNavigator();
 
-const users = [
+const usuarios = [
   {
-    username: "user1",
-    name: "John Doe",
-    password: "password1",
+    username: "Alejandro",
+    name: "Alejandro Horta",
+    password: "12345",
   },
   {
-    username: "user2",
-    name: "Jane Smith",
-    password: "password2",
+    username: "Pedro",
+    name: "Pedro Sanchez",
+    password: "54321",
   },
 ];
 
-const cars = [
+const carros = [
   {
-    platenumber: "ABC123",
+    platenumber: "kHV21E",
+    brand: "Kia",
+    state: "no disponible",
+  },
+  {
+    platenumber: "MOR666",
     brand: "Toyota",
     state: "disponible",
   },
-  {
-    platenumber: "XYZ789",
-    brand: "Honda",
-    state: "no disponible",
-  },
 ];
 
-const rents = [
+const rentas = [
   {
     rentnumber: 1,
-    username: "user1",
-    platenumber: "XYZ789",
-    rentdate: "2023-05-01",
+    username: "Luisa Arango",
+    platenumber: "BEL565",
+    rentdate: "2023-04-05",
   },
 ];
 
@@ -53,10 +53,10 @@ export default function App() {
   return (
     <PaperProvider>
       <NavigationContainer>
-        <DataContext.Provider value={{ users, cars, rents }}>
+        <DataContext.Provider value={{ usuarios, carros, rentas }}>
           <Tab.Navigator>
             <Tab.Screen
-              name="Users"
+              name="Rent Car"
               children={() => (
                 <UsersScreen loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
               )}
@@ -80,7 +80,7 @@ export default function App() {
                   component={RentsScreen}
                   options={{
                     tabBarIcon: () => (
-                      <MaterialIcons name="folder" size={22} color="green" />
+                      <MaterialIcons name="payment" size={22} color="black" />
                     ),
                   }}
                 />
