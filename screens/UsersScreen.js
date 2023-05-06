@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import DataContext from "../DataContext";
 
 const UsersScreen = ({ loggedIn, setLoggedIn }) => {
-  const { users } = useContext(DataContext);
+  const { usuarios } = useContext(DataContext);
   const {
     control,
     handleSubmit,
@@ -14,7 +14,7 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
   } = useForm();
 
   const onSubmit = (data) => {
-    const user = users.find(
+    const user = usuarios.find(
       (user) =>
         user.username === data.username && user.password === data.password
     );
@@ -22,7 +22,7 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
       setLoggedIn(true);
       reset();
     } else {
-      console.log("Nombre de usuario o contraseña incorrectos");
+      console.log("Usuario o contraseña incorrectos");
     }
   };
 
@@ -32,14 +32,27 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Iniciar sesión</Text>
+      <Text>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <img
+          src="https://www.bscamerica.com/wp-content/uploads/2022/04/NEWBSCwheels3.gif"
+          width={"120%"}
+        ></img>
+      </Text>
+      <Text style={styles.title}></Text>
       {!loggedIn && (
         <>
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                label="Nombre de usuario"
+                style={styles.TextInput}
+                label="Usuario"
                 onBlur={onBlur}
                 onChangeText={(value) => onChange(value)}
                 value={value}
@@ -49,12 +62,13 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
             name="username"
             rules={{ required: true }}
           />
-          {errors.username && <Text>El nombre de usuario es requerido.</Text>}
-
+          {errors.username && <Text>Usuario requerido.</Text>}
+          <br></br>
           <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
+                style={styles.TextInput}
                 label="Contraseña"
                 onBlur={onBlur}
                 onChangeText={(value) => onChange(value)}
@@ -66,8 +80,9 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
             name="password"
             rules={{ required: true }}
           />
-          {errors.password && <Text>La contraseña es requerida.</Text>}
-
+          {errors.password && <Text>Contraseña requerida.</Text>}
+          <br></br>
+          <br></br>
           <Button
             mode="contained"
             onPress={handleSubmit(onSubmit)}
@@ -90,6 +105,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
+    backgroundColor: "white",
   },
   title: {
     fontSize: 24,
@@ -98,6 +114,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+    backgroundColor: "#364b91",
+  },
+  TextInput: {
+    backgroundColor: "white",
   },
 });
 
