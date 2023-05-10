@@ -1,15 +1,14 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import DataContext from "../DataContext";
 
-
 const UsersScreen = ({ loggedIn, setLoggedIn }) => {
   const [message, setMessage] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
 
-  const { users } = useContext(DataContext);
+  const { users, addUser } = useContext(DataContext);
   const {
     control,
     handleSubmit,
@@ -20,7 +19,7 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
   const onSubmit = (data) => {
     if (isRegistering) {
       // Handle user registration
-      // ...
+      addUser(data);
       setIsRegistering(false);
       setMessage("Usuario registrado con éxito");
     } else {
@@ -59,14 +58,14 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
                 label="Nombre de usuario"
                 onBlur={onBlur}
                 onChangeText={(value) => onChange(value)}
-                value={value}
+                value={value || ""}
                 error={errors.username}
               />
             )}
             name="username"
             rules={{ required: true }}
+            defaultValue=""
           />
-          {errors.username && <Text>El nombre de usuario es requerido.</Text>}
 
           <Controller
             control={control}
@@ -75,15 +74,15 @@ const UsersScreen = ({ loggedIn, setLoggedIn }) => {
                 label="Contraseña"
                 onBlur={onBlur}
                 onChangeText={(value) => onChange(value)}
-                value={value}
+                value={value || ""}
                 secureTextEntry
                 error={errors.password}
               />
             )}
             name="password"
             rules={{ required: true }}
+            defaultValue=""
           />
-          {errors.password && <Text>La contraseña es requerida.</Text>}
 
           <Button
             mode="contained"
@@ -128,8 +127,8 @@ const styles = StyleSheet.create({
   message: {
     color: "red",
     marginVertical: 10,
+
   },
-  
 });
 
 export default UsersScreen;

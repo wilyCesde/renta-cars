@@ -4,28 +4,45 @@ import {TextInput, Button} from 'react-native-paper';
 import {useForm, Controller} from 'react-hook-form';
 import React, {useContext} from 'react';
 import DataContext from '../DataContext';
+import { loadData, saveData } from "../Storage";
+import { getData } from "../Storage";
 const CarsScreen = () => {
 
   const {cars} = useContext(DataContext);
 
-  const {control, handleSubmit, reset, formState: {errors}} = useForm();
+  const {control, handleSubmit, reset, formState: {errors}} = useForm({
+    defaultValues: {
+      platenumber: '',
+      brand: '',
+    }
+  });
+  
   const [carList, setCarList] = React.useState(cars);
 
-  const onSubmit = (data) => {
-    // Verificar si el número de placa ya existe en el arreglo 'cars'
-    const carExists = cars.some((car) => car.platenumber === data.platenumber);
-
-    // Si el carro no existe, agregarlo al arreglo 'cars'
+  const onSubmit = async (data) => {
+    const carExists = cars.find(car => car.platenumber === data.platenumber);
+    
     if (!carExists) {
       cars.push({...data, state: 'disponible'});
       setCarList([...cars]);
       reset();
       console.log("Carro registrado con éxito:", data);
+      await saveData('carList', cars); // Guardar en LocalStorage
     } else {
       console.log("El número de placa ya existe, elija otro.");
     }
   };
-
+  React.useEffect(() => {
+    const fetchCarList = async () => {
+      const storedCarList = await loadData('carList');
+      if (storedCarList) {
+        setCarList(storedCarList);
+      }
+    };
+    fetchCarList();
+  }, []);
+  
+  
   const renderItem = ({item}) => (
     <View style={styles.listItem}>
       <Text>Placa: {item.platenumber}</Text>

@@ -8,52 +8,91 @@ import DataContext from "./DataContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import Icon from "@mdi/react";
 import { mdiCarBack } from "@mdi/js";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { loadData, saveData } from "./Storage";
+
+
+
 
 const Tab = createBottomTabNavigator();
-
-const users = [
-  {
-    username: "user1",
-    name: "John Doe",
-    password: "password1",
-  },
-  {
-    username: "user2",
-    name: "Jane Smith",
-    password: "password2",
-  },
-];
-
-const cars = [
-  {
-    platenumber: "ABC123",
-    brand: "Toyota",
-    state: "disponible",
-  },
-  {
-    platenumber: "XYZ789",
-    brand: "Honda",
-    state: "no disponible",
-  },
-];
-
-const rents = [
-  {
-    rentnumber: 1,
-    username: "user1",
-    platenumber: "XYZ789",
-    rentdate: "2023-05-01",
-  },
-];
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
+  const [users, setUsers] = useState([]);
+  const [cars, setCars] = useState([]);
+  const [rents, setRents] = useState([]);
+
+  useEffect(() => {
+    loadData("users").then((loadedUsers) => {
+      if (loadedUsers) {
+        setUsers(loadedUsers);
+      } else {
+        setUsers([
+          {
+            username: "user1",
+            name: "John Doe",
+            password: "password1",
+          },
+          {
+            username: "user2",
+            name: "Jane Smith",
+            password: "password2",
+          },
+        ]);
+      }
+    });
+    loadData("cars").then((loadedCars) => {
+      if (loadedCars) {
+        setCars(loadedCars);
+      } else {
+        setCars([
+          {
+            platenumber: "ABC123",
+            brand: "Toyota",
+            state: "disponible",
+          },
+          {
+            platenumber: "XYZ789",
+            brand: "Honda",
+            state: "no disponible",
+          },
+        ]);
+      }
+    });
+    loadData("rents").then((loadedRents) => {
+      if (loadedRents) {
+        setRents(loadedRents);
+      } else {
+        setRents([
+          {
+            rentnumber: 1,
+            username: "user1",
+            platenumber: "XYZ789",
+            rentdate: "2023-05-01",
+          },
+        ]);
+      }
+    });
+  }, []);
+  // ... Resto del código
+
+  const addUser = (newUser) => {
+    setUsers((prevUsers) => {
+      const updatedUsers = [...prevUsers, newUser];
+      saveData("users", updatedUsers);
+      return updatedUsers;
+    });
+  };
+  
+
+  
+
+
   return (
     <PaperProvider>
       <NavigationContainer>
-        <DataContext.Provider value={{ users, cars, rents }}>
+      <DataContext.Provider value={{ users, cars, rents, addUser }}>
           <Tab.Navigator>
             <Tab.Screen
               name="Users"
