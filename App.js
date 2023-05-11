@@ -86,13 +86,21 @@ export default function App() {
   };
   
 
+  const addRent = (newRent) => {
+    setRents((prevRents) => {
+      const updatedRents = [...prevRents, newRent];
+      saveData("rents", updatedRents);
+      return updatedRents;
+    });
+  };
   
 
 
   return (
     <PaperProvider>
       <NavigationContainer>
-      <DataContext.Provider value={{ users, cars, rents, addUser }}>
+      <DataContext.Provider value={{ users, cars, rents, addUser, addRent }}>
+
           <Tab.Navigator>
             <Tab.Screen
               name="Users"

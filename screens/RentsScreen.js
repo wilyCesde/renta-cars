@@ -3,46 +3,65 @@ import { TextInput, Button } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import React, { useContext, useState } from "react";
 import DataContext from "../DataContext";
-
+import DropDownPicker from "react-native-dropdown-picker";
 
 const RentsScreen = () => {
+  const renderItem = ({ item }) => (
+    <View style={styles.listItem}>
+      <Text>Alquiler N°: {item.rentnumber}</Text>
+      <Text>Nombre de usuario: {item.username}</Text>
+      <Text>Número de placa: {item.platenumber}</Text>
+      <Text>Fecha de alquiler: {item.rentdate}</Text>
+    </View>
+  );
+
+  const { users, cars, rents, addRent } = useContext(DataContext);
   const [message, setMessage] = useState("");
-
-  const { users, cars, rents } = useContext(DataContext);
-  const [rentsList, setRentsList] = useState(rents);
-
   const {
     control,
     handleSubmit,
-    reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      username: "",
+      platenumber: "",
+    },
+  });
+
 
   const onSubmit = (data) => {
-    // Verificar si el usuario y el número de placa existen en los arreglos respectivos
     const userExists = users.some((user) => user.username === data.username);
     const carIndex = cars.findIndex(
       (car) => car.platenumber === data.platenumber
     );
 
-    if (userExists && carIndex !== -1 && cars[carIndex].state === "disponible") {
-      // ...
+    if (
+      userExists &&
+      carIndex !== -1 &&
+      cars[carIndex].state === "disponible"
+    ) {
+      const rentnumber = rents.length + 1;
+      const rentdate = new Date().toISOString().slice(0, 10);
+
+      const newRent = {
+        rentnumber,
+        username: data.username,
+        platenumber: data.platenumber,
+        rentdate,
+      };
+
+      addRent(newRent);
       setMessage("Alquiler registrado con éxito");
     } else {
       setMessage("El usuario, número de placa o estado del carro son inválidos");
     }
-
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.listItem}>
-      <Text>{`Alquiler #${item.rentnumber} - Usuario: ${item.username} - Placa: ${item.platenumber} - Fecha: ${item.rentdate}`}</Text>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Registrar Alquiler</Text>
+
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
@@ -62,17 +81,24 @@ const RentsScreen = () => {
       <Controller
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            label="Número de placa"
-            onBlur={onBlur}
-            onChangeText={(value) => onChange(value)}
+          <DropDownPicker
+            items={cars.map((car) => ({
+              label: car.platenumber,
+              value: car.platenumber,
+            }))}
+            placeholder="Selecciona un número de placa"
+            containerStyle={{ height: 40, marginTop: 10 }}
+            style={{ backgroundColor: "#fafafa" }}
+            dropDownStyle={{ backgroundColor: "#fafafa" }}
+            onChangeItem={(item) => onChange(item.value)}
             value={value}
-            error={errors.platenumber}
+            onBlur={onBlur}
           />
         )}
         name="platenumber"
         rules={{ required: true }}
       />
+
       {errors.platenumber && <Text>El número de placa es requerido.</Text>}
 
       <Button
@@ -84,21 +110,14 @@ const RentsScreen = () => {
       </Button>
       <Text style={styles.listTitle}>Lista de Rentas</Text>
       <FlatList
-        data={rentsList}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.rentnumber.toString()}
-      />
-      <FlatList
-        data={rentsList}
+        data={rents}
         renderItem={renderItem}
         keyExtractor={(item) => item.rentnumber.toString()}
       />
       <Text style={styles.message}>{message}</Text>
-
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -116,18 +135,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 20,
     marginBottom: 10,
-  },
-  listItem: {
-    backgroundColor: "#f0f0f0",
-    padding: 10,
-    marginBottom: 10,
     borderRadius: 5,
   },
   message: {
     color: "red",
     marginVertical: 10,
   },
-  
+
 });
 
 export default RentsScreen;

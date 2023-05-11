@@ -10,28 +10,31 @@ const CarsScreen = () => {
 
   const {cars} = useContext(DataContext);
 
-  const {control, handleSubmit, reset, formState: {errors}} = useForm({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
-      platenumber: '',
-      brand: '',
-    }
+      platenumber: "",
+      brand: "",
+    },
   });
+  
   
   const [carList, setCarList] = React.useState(cars);
 
   const onSubmit = async (data) => {
-    const carExists = cars.find(car => car.platenumber === data.platenumber);
-    
+    const carExists = cars.find((car) => car.platenumber === data.platenumber);
+  
     if (!carExists) {
-      cars.push({...data, state: 'disponible'});
-      setCarList([...cars]);
+      const newCar = { ...data, state: "disponible" };
+      addCar(newCar); // Utiliza la función addCar proporcionada por DataContext
+      setCarList([...cars, newCar]);
       reset();
       console.log("Carro registrado con éxito:", data);
-      await saveData('carList', cars); // Guardar en LocalStorage
+      await saveData("carList", cars); // Guardar en LocalStorage
     } else {
       console.log("El número de placa ya existe, elija otro.");
     }
   };
+  
   React.useEffect(() => {
     const fetchCarList = async () => {
       const storedCarList = await loadData('carList');
@@ -40,7 +43,7 @@ const CarsScreen = () => {
       }
     };
     fetchCarList();
-  }, []);
+  }, [cars]);
   
   
   const renderItem = ({item}) => (
